@@ -12,7 +12,11 @@ enum EncoderMode:
 enum DecoderResult:
   case ERROR, SUCCESS, NEEDS_MORE_INPUT, NEEDS_MORE_OUTPUT
 
-private def copy(seq: Seq[Byte])(implicit zone: Zone): Ptr[Byte] =
+val DEFAULT_QUALITY = 11
+
+val DEFAULT_WINDOW = 22
+
+private def copy(seq: IndexedSeq[Byte])(implicit zone: Zone): Ptr[Byte] =
   val buf = alloc[Byte](seq.length.toUInt)
   var i = 0
 
@@ -22,7 +26,7 @@ private def copy(seq: Seq[Byte])(implicit zone: Zone): Ptr[Byte] =
 
   buf
 
-private def copy(buf: Ptr[Byte], size: Int): Seq[Byte] =
+private def copy(buf: Ptr[Byte], size: Int): IndexedSeq[Byte] =
   val arr = new Array[Byte](size)
   var i = 0
 
@@ -32,8 +36,8 @@ private def copy(buf: Ptr[Byte], size: Int): Seq[Byte] =
 
   arr to ArraySeq
 
-def encoderCompress(quality: Int, lgwin: Int, mode: EncoderMode, input: Seq[Byte]): Option[Seq[Byte]] = Zone {
-  implicit z =>
+def encoderCompress(quality: Int, lgwin: Int, mode: EncoderMode, input: IndexedSeq[Byte]): Option[IndexedSeq[Byte]] =
+  Zone { implicit z =>
     val encoded_buffer = alloc[Byte]((input.length + 1000).toUInt)
     val encoded_size = stackalloc[CSize]()
 
@@ -48,4 +52,4 @@ def encoderCompress(quality: Int, lgwin: Int, mode: EncoderMode, input: Seq[Byte
       ) == 0
     then None
     else Some(copy(encoded_buffer, (!encoded_size).toInt))
-}
+  }

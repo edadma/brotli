@@ -1,4 +1,9 @@
 package io.github.edadma.brotli
 
 @main def run(): Unit =
-  println("Scala Native is awesome!")
+  val input = "this is the input string"
+  val compressed =
+    encoderCompress(DEFAULT_QUALITY, DEFAULT_WINDOW, EncoderMode.TEXT, input.getBytes.toIndexedSeq) getOrElse (sys
+      .error("error compressing"))
+
+  println(compressed.length)

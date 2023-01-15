@@ -2,7 +2,7 @@ package io.github.edadma.brotli.extern
 
 import scala.scalanative.unsafe._
 
-@link("cairo")
+@link("brotli")
 @extern
 object LibBrotli:
   def BrotliEncoderCompress(
