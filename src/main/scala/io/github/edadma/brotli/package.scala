@@ -38,8 +38,11 @@ private def copy(buf: Ptr[Byte], size: Int): IndexedSeq[Byte] =
 
 def encoderCompress(quality: Int, lgwin: Int, mode: EncoderMode, input: IndexedSeq[Byte]): Option[IndexedSeq[Byte]] =
   Zone { implicit z =>
-    val encoded_buffer = alloc[Byte]((input.length + 1000).toUInt)
+    val size = (input.length + 1000).toUInt
+    val encoded_buffer = alloc[Byte](size)
     val encoded_size = stackalloc[CSize]()
+
+    !encoded_size = size
 
     if lib.BrotliEncoderCompress(
         quality,

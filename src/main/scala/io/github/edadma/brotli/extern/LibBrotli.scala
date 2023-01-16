@@ -20,3 +20,4 @@ object LibBrotli:
       decoded_size: Ptr[CSize],
       decoded_buffer: Ptr[Byte],
   ): CInt = extern
+  def

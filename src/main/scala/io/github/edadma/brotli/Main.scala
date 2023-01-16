@@ -6,4 +6,5 @@ package io.github.edadma.brotli
     encoderCompress(DEFAULT_QUALITY, DEFAULT_WINDOW, EncoderMode.TEXT, input.getBytes.toIndexedSeq) getOrElse (sys
       .error("error compressing"))
 
+  println(input.length)
   println(compressed.length)
