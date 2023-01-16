@@ -9,12 +9,14 @@ import scala.scalanative.unsigned.*
 enum EncoderMode:
   case GENERIC, TEXT, FONT
 
-enum DecoderResult:
-  case ERROR, SUCCESS, NEEDS_MORE_INPUT, NEEDS_MORE_OUTPUT
+//enum DecoderResult:
+//  case ERROR, SUCCESS, NEEDS_MORE_INPUT, NEEDS_MORE_OUTPUT
 
 val DEFAULT_QUALITY = 11
 
 val DEFAULT_WINDOW = 22
+
+private val ERROR = 0
 
 private def copy(seq: IndexedSeq[Byte])(implicit zone: Zone): Ptr[Byte] =
   val buf = alloc[Byte](seq.length.toUInt)
@@ -52,7 +54,7 @@ def encoderCompress(quality: Int, lgwin: Int, mode: EncoderMode, input: IndexedS
         copy(input),
         encoded_size,
         encoded_buffer,
-      ) == 0
+      ) == ERROR
     then None
     else Some(copy(encoded_buffer, (!encoded_size).toInt))
   }
@@ -64,6 +66,6 @@ def decoderDecompress(encoded: IndexedSeq[Byte]): Option[IndexedSeq[Byte]] = Zon
 
   !decoded_size = size
 
-  if lib.BrotliDecoderDecompress(encoded.length.toUInt, copy(encoded), decoded_size, decoded_buffer) == 0 then None
+  if lib.BrotliDecoderDecompress(encoded.length.toUInt, copy(encoded), decoded_size, decoded_buffer) == ERROR then None
   else Some(copy(decoded_buffer, (!decoded_size).toInt))
 }
