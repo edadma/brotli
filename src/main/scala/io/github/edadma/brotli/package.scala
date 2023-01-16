@@ -56,3 +56,14 @@ def encoderCompress(quality: Int, lgwin: Int, mode: EncoderMode, input: IndexedS
     then None
     else Some(copy(encoded_buffer, (!encoded_size).toInt))
   }
+
+def decoderDecompress(encoded: IndexedSeq[Byte]): Option[IndexedSeq[Byte]] = Zone { implicit z =>
+  val size = (encoded.length * 7).toUInt
+  val decoded_buffer = alloc[Byte](size)
+  val decoded_size = stackalloc[CSize]()
+
+  !decoded_size = size
+
+  if lib.BrotliDecoderDecompress(encoded.length.toUInt, copy(encoded), decoded_size, decoded_buffer) == 0 then None
+  else Some(copy(decoded_buffer, (!decoded_size).toInt))
+}

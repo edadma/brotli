@@ -3,6 +3,7 @@ package io.github.edadma.brotli.extern
 import scala.scalanative.unsafe._
 
 @link("brotlienc")
+@link("brotlidec")
 @extern
 object LibBrotli:
   def BrotliEncoderCompress(
@@ -20,4 +21,3 @@ object LibBrotli:
       decoded_size: Ptr[CSize],
       decoded_buffer: Ptr[Byte],
   ): CInt = extern
-  def
