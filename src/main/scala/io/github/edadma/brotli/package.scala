@@ -45,7 +45,7 @@ private def copy(buf: Ptr[Byte], size: Int): IndexedSeq[Byte] =
 def encoderVersion: Int = lib.BrotliEncoderVersion
 def encoderCompress(quality: Int, lgwin: Int, mode: EncoderMode, input: IndexedSeq[Byte]): Option[IndexedSeq[Byte]] =
   Zone { implicit z =>
-    val size = (input.length + 1000).toUInt
+    val size = lib.BrotliEncoderMaxCompressedSize(input.length.toULong)
     val encoded_buffer = alloc[Byte](size)
     val encoded_size = stackalloc[CSize]()
 
@@ -76,7 +76,8 @@ implicit class EncoderState(val stateptr: lib.encoderState_tp):
     !size = max.toUInt
     copy(lib.BrotliEncoderTakeOutput(stateptr, size), (!size).toInt)
 
-def BrotliEncoderCreateInstance: EncoderState = lib.BrotliEncoderCreateInstance(null, null, null)
+def encoderCreateInstance: EncoderState = lib.BrotliEncoderCreateInstance(null, null, null)
+def encoderMaxCompressedSize(input_size: Long): Long = lib.BrotliEncoderMaxCompressedSize(input_size.toULong).toLong
 
 def decoderDecompress(encoded: IndexedSeq[Byte]): Option[IndexedSeq[Byte]] = Zone { implicit z =>
   val size = (encoded.length * 7).toUInt
