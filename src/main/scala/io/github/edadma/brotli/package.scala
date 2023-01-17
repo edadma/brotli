@@ -9,6 +9,10 @@ import scala.scalanative.unsigned.*
 enum EncoderMode:
   case GENERIC, TEXT, FONT
 
+enum EncoderParameter:
+  case MODE, QUALITY, LGWIN, LGBLOCK, DISABLE_LITERAL_CONTEXT_MODELING, SIZE_HINT, LARGE_WINDOW, NPOSTFIX, NDIRECT,
+    STREAM_OFFSET
+
 //enum DecoderResult:
 //  case ERROR, SUCCESS, NEEDS_MORE_INPUT, NEEDS_MORE_OUTPUT
 

@@ -6,6 +6,11 @@ import scala.scalanative.unsafe._
 @link("brotlidec")
 @extern
 object LibBrotli:
+  type encoderState_t = CStruct0
+  type encoderState_tp = Ptr[encoderState_t]
+
+  // compression
+
   def BrotliEncoderCompress(
       quality: CInt,
       lgwin: CInt,
@@ -15,6 +20,16 @@ object LibBrotli:
       encoded_size: Ptr[CSize],
       encoded_buffer: Ptr[Byte],
   ): CInt = extern
+  def BrotliEncoderCreateInstance(alloc_func: Ptr[Byte], free_func: Ptr[Byte], opaque: Ptr[Byte]): encoderState_tp =
+    extern
+  def BrotliEncoderDestroyInstance(state: encoderState_tp): Unit = extern
+  def BrotliEncoderHasMoreOutput(state: encoderState_tp): CInt = extern
+  def BrotliEncoderIsFinished(state: encoderState_tp): CInt = extern
+  def BrotliEncoderMaxCompressedSize(input_size: CSize): CSize = extern
+  def BrotliEncoderSetParameter(state: encoderState_tp, param: CInt, value: CInt): CInt = extern
+
+  // decompression
+
   def BrotliDecoderDecompress(
       encoded_size: CSize,
       encoded_buffer: Ptr[Byte],
