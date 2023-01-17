@@ -76,6 +76,9 @@ implicit class EncoderState(val stateptr: lib.encoderState_tp):
     !size = max.toUInt
     copy(lib.BrotliEncoderTakeOutput(stateptr, size), (!size).toInt)
 
+enum EncoderOperation:
+  case PROCESS, FLUSH, FINISH, EMIT_METADATA
+
 def encoderCreateInstance: EncoderState = lib.BrotliEncoderCreateInstance(null, null, null)
 def encoderMaxCompressedSize(input_size: Long): Long = lib.BrotliEncoderMaxCompressedSize(input_size.toULong).toLong
 
