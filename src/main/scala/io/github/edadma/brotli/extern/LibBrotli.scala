@@ -27,6 +27,8 @@ object LibBrotli:
   def BrotliEncoderIsFinished(state: encoderState_tp): CInt = extern
   def BrotliEncoderMaxCompressedSize(input_size: CSize): CSize = extern
   def BrotliEncoderSetParameter(state: encoderState_tp, param: CInt, value: CInt): CInt = extern
+  def BrotliEncoderTakeOutput(state: encoderState_tp, size: CSize): Ptr[Byte] = extern
+  def BrotliEncoderVersion: CInt = extern
 
   // decompression
 
