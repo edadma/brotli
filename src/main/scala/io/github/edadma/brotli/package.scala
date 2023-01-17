@@ -42,6 +42,7 @@ private def copy(buf: Ptr[Byte], size: Int): IndexedSeq[Byte] =
 
   arr to ArraySeq
 
+def encoderVersion: Int = lib.BrotliEncoderVersion
 def encoderCompress(quality: Int, lgwin: Int, mode: EncoderMode, input: IndexedSeq[Byte]): Option[IndexedSeq[Byte]] =
   Zone { implicit z =>
     val size = (input.length + 1000).toUInt
