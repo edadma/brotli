@@ -64,6 +64,20 @@ def encoderCompress(quality: Int, lgwin: Int, mode: EncoderMode, input: IndexedS
     else Some(copy(encoded_buffer, (!encoded_size).toInt))
   }
 
+implicit class EncoderState(val stateptr: lib.encoderState_tp):
+  def destroyInstance(): Unit = lib.BrotliEncoderDestroyInstance(stateptr)
+  def hasMoreOutput: Boolean = lib.BrotliEncoderHasMoreOutput(stateptr) != 0
+  def isFinished: Boolean = lib.BrotliEncoderIsFinished(stateptr) != 0
+  def setParameter(param: EncoderParameter, value: Int): Boolean =
+    lib.BrotliEncoderSetParameter(stateptr, param.ordinal, value) != 0
+  def takeOutput(max: Int): IndexedSeq[Byte] =
+    val size = stackalloc[CSize]()
+
+    !size = max.toUInt
+    copy(lib.BrotliEncoderTakeOutput(stateptr, size), (!size).toInt)
+
+def BrotliEncoderCreateInstance: EncoderState = lib.BrotliEncoderCreateInstance(null, null, null)
+
 def decoderDecompress(encoded: IndexedSeq[Byte]): Option[IndexedSeq[Byte]] = Zone { implicit z =>
   val size = (encoded.length * 7).toUInt
   val decoded_buffer = alloc[Byte](size)

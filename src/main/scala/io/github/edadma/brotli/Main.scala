@@ -1,7 +1,7 @@
 package io.github.edadma.brotli
 
 @main def run(): Unit =
-//  val input = "this is the input string"
+  val input = "this is the input string"
 //  val compressed =
 //    encoderCompress(DEFAULT_QUALITY, DEFAULT_WINDOW, EncoderMode.TEXT, input.getBytes.toIndexedSeq) getOrElse sys
 //      .error("error compressing")
