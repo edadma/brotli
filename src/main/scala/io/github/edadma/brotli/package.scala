@@ -80,7 +80,7 @@ implicit class EncoderState(val stateptr: lib.encoderState_tp):
     copy(lib.BrotliEncoderTakeOutput(stateptr, size), (!size).toInt)
   def encoderCompressStream(input: IndexedSeq[Byte], op: EncoderOperation): Option[(Int, IndexedSeq[Byte])] =
     Zone { implicit z =>
-      val available_in = stackalloc[Ptr[CSize]]()
+      val available_in = stackalloc[CSize]()
 
       !available_in = input.length.toUInt
 
@@ -88,7 +88,7 @@ implicit class EncoderState(val stateptr: lib.encoderState_tp):
 
       !next_in = copy(input)
 
-      val available_out = stackalloc[Ptr[CSize]]()
+      val available_out = stackalloc[CSize]()
       val size = lib.BrotliEncoderMaxCompressedSize(input.length.toULong)
 
       !available_out = size
@@ -98,7 +98,16 @@ implicit class EncoderState(val stateptr: lib.encoderState_tp):
 
       !next_out = encoded_buffer
 
-      if lib.BrotliEncoderCompressStream(stateptr, op.ordinal) == 0 then None
+      if lib.BrotliEncoderCompressStream(
+          stateptr,
+          op.ordinal,
+          available_in,
+          next_in,
+          available_out,
+          next_out,
+          null,
+        ) == 0
+      then None
       else Some(((!available_in).toInt, copy(encoded_buffer, size.toInt - (!available_out).toInt)))
     }
 
