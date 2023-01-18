@@ -64,6 +64,9 @@ def encoderCompress(quality: Int, lgwin: Int, mode: EncoderMode, input: IndexedS
     else Some(copy(encoded_buffer, (!encoded_size).toInt))
   }
 
+enum EncoderOperation:
+  case PROCESS, FLUSH, FINISH, EMIT_METADATA
+
 implicit class EncoderState(val stateptr: lib.encoderState_tp):
   def destroyInstance(): Unit = lib.BrotliEncoderDestroyInstance(stateptr)
   def hasMoreOutput: Boolean = lib.BrotliEncoderHasMoreOutput(stateptr) != 0
@@ -75,9 +78,29 @@ implicit class EncoderState(val stateptr: lib.encoderState_tp):
 
     !size = max.toUInt
     copy(lib.BrotliEncoderTakeOutput(stateptr, size), (!size).toInt)
+  def encoderCompressStream(input: IndexedSeq[Byte], op: EncoderOperation): Option[(Int, IndexedSeq[Byte])] =
+    Zone { implicit z =>
+      val available_in = stackalloc[Ptr[CSize]]()
 
-enum EncoderOperation:
-  case PROCESS, FLUSH, FINISH, EMIT_METADATA
+      !available_in = input.length.toUInt
+
+      val next_in = stackalloc[Ptr[Byte]]()
+
+      !next_in = copy(input)
+
+      val available_out = stackalloc[Ptr[CSize]]()
+      val size = lib.BrotliEncoderMaxCompressedSize(input.length.toULong)
+
+      !available_out = size
+
+      val next_out = stackalloc[Ptr[Byte]]()
+      val encoded_buffer = alloc[Byte](size)
+
+      !next_out = encoded_buffer
+
+      if lib.BrotliEncoderCompressStream(stateptr, op.ordinal) == 0 then None
+      else Some(((!available_in).toInt, copy(encoded_buffer, size.toInt - (!available_out).toInt)))
+    }
 
 def encoderCreateInstance: EncoderState = lib.BrotliEncoderCreateInstance(null, null, null)
 def encoderMaxCompressedSize(input_size: Long): Long = lib.BrotliEncoderMaxCompressedSize(input_size.toULong).toLong
