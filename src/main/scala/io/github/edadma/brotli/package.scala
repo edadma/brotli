@@ -22,7 +22,7 @@ val DEFAULT_WINDOW = 22
 
 private val ERROR = 0
 
-private def copy(seq: IndexedSeq[Byte])(implicit zone: Zone): Ptr[Byte] =
+private def copy(seq: collection.IndexedSeq[Byte])(implicit zone: Zone): Ptr[Byte] =
   val buf = alloc[Byte](seq.length.toUInt)
   var i = 0
 
@@ -32,7 +32,7 @@ private def copy(seq: IndexedSeq[Byte])(implicit zone: Zone): Ptr[Byte] =
 
   buf
 
-private def copy(buf: Ptr[Byte], size: Int): IndexedSeq[Byte] =
+private def copy(buf: Ptr[Byte], size: Int): Array[Byte] =
   val arr = new Array[Byte](size)
   var i = 0
 
@@ -40,10 +40,15 @@ private def copy(buf: Ptr[Byte], size: Int): IndexedSeq[Byte] =
     arr(i) = buf(i)
     i += 1
 
-  arr to ArraySeq
+  arr
 
 def encoderVersion: Int = lib.BrotliEncoderVersion
-def encoderCompress(quality: Int, lgwin: Int, mode: EncoderMode, input: IndexedSeq[Byte]): Option[IndexedSeq[Byte]] =
+def encoderCompress(
+    quality: Int,
+    lgwin: Int,
+    mode: EncoderMode,
+    input: collection.IndexedSeq[Byte],
+): Option[Array[Byte]] =
   Zone { implicit z =>
     val size = lib.BrotliEncoderMaxCompressedSize(input.length.toULong)
     val encoded_buffer = alloc[Byte](size)
@@ -73,12 +78,12 @@ implicit class EncoderState(val stateptr: lib.encoderState_tp):
   def isFinished: Boolean = lib.BrotliEncoderIsFinished(stateptr) != 0
   def setParameter(param: EncoderParameter, value: Int): Boolean =
     lib.BrotliEncoderSetParameter(stateptr, param.ordinal, value) != 0
-  def takeOutput(max: Int): IndexedSeq[Byte] =
+  def takeOutput(max: Int): Array[Byte] =
     val size = stackalloc[CSize]()
 
     !size = max.toUInt
     copy(lib.BrotliEncoderTakeOutput(stateptr, size), (!size).toInt)
-  def encoderCompressStream(input: IndexedSeq[Byte], op: EncoderOperation): Option[(Int, IndexedSeq[Byte])] =
+  def encoderCompressStream(input: collection.IndexedSeq[Byte], op: EncoderOperation): Option[(Int, Array[Byte])] =
     Zone { implicit z =>
       val available_in = stackalloc[CSize]()
 
@@ -114,7 +119,7 @@ implicit class EncoderState(val stateptr: lib.encoderState_tp):
 def encoderCreateInstance: EncoderState = lib.BrotliEncoderCreateInstance(null, null, null)
 def encoderMaxCompressedSize(input_size: Long): Long = lib.BrotliEncoderMaxCompressedSize(input_size.toULong).toLong
 
-def decoderDecompress(encoded: IndexedSeq[Byte]): Option[IndexedSeq[Byte]] = Zone { implicit z =>
+def decoderDecompress(encoded: collection.IndexedSeq[Byte]): Option[Array[Byte]] = Zone { implicit z =>
   val size = (encoded.length * 7).toUInt
   val decoded_buffer = alloc[Byte](size)
   val decoded_size = stackalloc[CSize]()
