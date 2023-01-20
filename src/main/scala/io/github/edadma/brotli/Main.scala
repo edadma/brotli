@@ -1,4 +1,4 @@
-package io.github.edadma.brotli
+package io.github.edadma.libbrotli
 
 @main def run(): Unit =
   val input = "this is the input string"

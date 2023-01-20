@@ -1,4 +1,4 @@
-package io.github.edadma.brotli.extern
+package io.github.edadma.libbrotli.extern
 
 import scala.scalanative.unsafe._
 

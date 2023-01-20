@@ -1,4 +1,4 @@
-package io.github.edadma.brotli
+package io.github.edadma.libbrotli
 
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers

@@ -1,4 +1,4 @@
-name := "brotli"
+name := "libbrotli"
 
 version := "0.0.1"
 
