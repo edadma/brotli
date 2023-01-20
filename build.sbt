@@ -23,9 +23,9 @@ scalacOptions ++= Seq(
   "-language:existentials",
 )
 
-organization := "io.github.edadma"
+organization := "io.github.spritzsn"
 
-githubOwner := "edadma"
+githubOwner := "spritzsn"
 
 githubRepository := name.value
 
