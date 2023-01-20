@@ -1,4 +1,4 @@
-package io.github.edadma.libbrotli
+package io.github.spritzsn.libbrotli
 
 @main def run(): Unit =
   val input = "this is the input string"
@@ -13,4 +13,4 @@ package io.github.edadma.libbrotli
   val decompressed = decoderDecompress(compressed) getOrElse sys.error("error decompressing")
 
   println(decompressed.length)
-  println(new String(decompressed.toArray))
+  println(new String(decompressed))

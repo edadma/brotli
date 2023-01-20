@@ -1,6 +1,6 @@
-package io.github.edadma.libbrotli
+package io.github.spritzsn.libbrotli
 
-import io.github.edadma.libbrotli.extern.LibBrotli as lib
+import io.github.spritzsn.libbrotli.extern.LibBrotli as lib
 
 import scala.collection.immutable.ArraySeq
 import scala.scalanative.unsafe.*
